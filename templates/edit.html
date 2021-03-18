@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Fasm.ga" />
+        <meta property="og:title" content="Fasm.ga | 255 - Brevi note di testo" />
+        <meta property="og:description" content="Fasm.ga | 255 è un servizio che permette di creare delle note di testo con un limite di 255 caratteri."/>
+        <meta property="og:image" content="https://fasm.ga/embed-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@ParliamoDiPC" />
+        <meta name="twitter:creator" content="@ParliamoDiPC" />
+        <meta name="keywords" content="note di testo, note online, fasm.ga 255, 255, fasm ga 255, fasm.ga, fasm ga" />
+        <meta name="theme-color" content="#FFEB3B">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.yellow-orange.min.css">
+        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+        <title>Nuova nota - {{ siteName }}</title>
+    </head>
+    <body bgcolor="#1e1e1e">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <span class="mdl-layout-title">{{ siteName }}</span>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation mdl-layout--large-screen-only">
+          <a class="mdl-navigation__link" href="/"><i class="material-icons">add</i> Nuova nota</a>
+					<a class="mdl-navigation__link" href="/dashboard"><i class="material-icons">dashboard</i> Dashboard</a>
+          <a class="mdl-navigation__link"><i class="material-icons">person</i> {{ user_name }}</a></a>
+        </nav>
+      </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <br><br>
+      <center><span class="mdl-layout-title"><i class="material-icons">person</i> {{ user_name }}</span></center>
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link" href="/"><i class="material-icons">add</i> Nuova nota</a>
+				<a class="mdl-navigation__link" href="/dashboard"><i class="material-icons">dashboard</i> Dashboard</a>
+      </nav>
+    </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <br><br>
+      <center><span class="mdl-layout-title"><!--<img src="https://fasm.ga/static/user.png" height="36" width="36">-->{{ user_name }}</span></center>
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link" href="/dashboard"><i class="material-icons">dashboard</i> Dashboard</a>
+      </nav>
+    </div>
+    <main class="mdl-layout__content">
+      <div class="page-content">
+        <center>
+          <font color="white">
+        <form class="form-horizontal" action="/edt" method="post">
+          <fieldset>
+            <h1 style="color:white">Modifica nota</h1>
+        <h5>{{ error|safe }}</h5>
+        <br>
+        <br>
+        <form action="#">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"><input class="mdl-textfield__input" type="text" name="description" id="description" size="30" style="color:#008AFC" required value="{{ oldDescription }}"><label class="mdl-textfield__label" for="sample3">Nuova descrizione...</label></div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield" style="color:#ffffff;">
+                <textarea class="mdl-textfield__input" type="text" rows= "3" id="note" name="note" required value="{{ oldNote }}"></textarea>
+              </div>
+							<input style="display:none" name="id" id="id" value="{{ id }}">
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="submit"></label>
+            <div class="col-md-4">
+              <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" value="MODIFICA">
+            </div>
+          </div>
+          </fieldset>
+          </form>
+        </center>
+      </font>
+      </div></main></div>
+    </body>
+</html>
