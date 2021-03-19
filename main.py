@@ -8,115 +8,79 @@ siteName = "Fasm.ga | 255"
 app = Flask('app')
 
 def newString():
-	letters = string.ascii_letters
-	result_str = ''.join(random.choice(letters) for i in range(25))
-	return result_str
+    letters = string.ascii_letters
+    result_str = ''.join(random.choice(letters) for i in range(25))
+    return result_str
 
 def getStrings(id):
-	urls = db["user_id_" + id]
-	return urls
+    urls = db["user_id_" + id]
+    return urls
 
 def compileLine(id):
-	return '<tr><td>' + id[5:] + '</td><td>' + db["name_" + id[5:]] + '</td><td>' + '<a href ="https://255.fasm.ga/delete/' + id[5:] + '"><i class="material-icons" style="color:#1E1E1E">delete</i></a>      <a href ="https://255.fasm.ga/edit/' + id[5:] + '"><i class="material-icons"style="color:#1E1E1E">edit</i></a></td></tr>'
+    return '<tr><td>' + id[5:] + '</td><td>' + db["name_" + id[5:]] + '</td><td>' + '<a href ="https://255.fasm.ga/delete/' + id[5:] + '"><i class="material-icons" style="color:#1E1E1E">delete</i></a>      <a href ="https://255.fasm.ga/edit/' + id[5:] + '"><i class="material-icons"style="color:#1E1E1E">edit</i></a></td></tr>'
 
 @app.route('/')
 def index():
-  global siteName
-  if request.headers['X-Replit-User-Id']:
-    return render_template("submit.html", siteName = siteName, user_name=request.headers['X-Replit-User-Name'])
-  else:
-    return render_template("index.html", siteName=siteName)
+    global siteName
+    if request.headers['X-Replit-User-Id']:
+        return render_template("submit.html", siteName = siteName, user_name=request.headers['X-Replit-User-Name'])
+    else:
+        return render_template("index.html", siteName=siteName)
 
 @app.route("/favicon.ico")
 def favicon():
-  return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
+    return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
 
 @app.route('/wp-login.php')
 def wploginphp():
-	global siteName
-	return redirect(url + 'dashboard')
+    global siteName
+    if request.headers['X-Replit-User-Id']:
+        return redirect(url + 'dashboard')
+    else:
+        return redirect("/", 302)
 
 @app.route('/dashboard')
 def dashboard():
-	if request.headers['X-Replit-User-Id']:
-		idTable = ""
-		global siteName
-		try:
-			ids = getStrings(request.headers['X-Replit-User-Id'])
-			for id in ids:
-				idTable = idTable + compileLine(id)
-			if idTable == "":
-				return render_template(
-					'dashboard.html',
-					siteName=siteName,
-					user_id=request.headers['X-Replit-User-Id'],
-					user_name=request.headers['X-Replit-User-Name'],
-					user_roles=request.headers['X-Replit-User-Roles'],
-					idTable = idTable,
-					error = "<center><h6 style='color:#ffffff'>Non hai ancora creato una nota.</h6></center>"
-				)
-			return render_template('dashboard.html',siteName=siteName, user_id=request.headers['X-Replit-User-Id'],user_name=request.headers['X-Replit-User-Name'], user_roles=request.headers['X-Replit-User-Roles'],idTable = idTable,error = "")
-		except:
-			return render_template(
-				'dashboard.html',
-				siteName=siteName,
-				user_id=request.headers['X-Replit-User-Id'],
-				user_name=request.headers['X-Replit-User-Name'],
-				user_roles=request.headers['X-Replit-User-Roles'],
-				idTable = idTable,
-				error = "<center><h6 style='color:#ffffff'>Non hai ancora creato una nota.</h6></center>"
-			)
-	else:
-		return redirect("/", 302)
+    global siteName
+    if request.headers['X-Replit-User-Id']:
+        idTable = ""
+        try:
+            ids = getStrings(request.headers['X-Replit-User-Id'])
+            for id in ids:
+                idTable = idTable + compileLine(id)
+            if idTable == "":
+                return render_template('dashboard.html', siteName=siteName, user_id=request.headers['X-Replit-User-Id'], user_name=request.headers['X-Replit-User-Name'], user_roles=request.headers['X-Replit-User-Roles'], idTable = idTable, error = "<center><h6 style='color:#ffffff'>Non hai ancora creato una nota.</h6></center>")
+            return render_template('dashboard.html',siteName=siteName, user_id=request.headers['X-Replit-User-Id'],user_name=request.headers['X-Replit-User-Name'], user_roles=request.headers['X-Replit-User-Roles'],idTable = idTable,error = "")
+        except:
+            return render_template('dashboard.html', siteName=siteName, user_id=request.headers['X-Replit-User-Id'], user_name=request.headers['X-Replit-User-Name'], user_roles=request.headers['X-Replit-User-Roles'], idTable = idTable, error = "<center><h6 style='color:#ffffff'>Non hai ancora creato una nota.</h6></center>")
+    else:
+        return redirect("/", 302)
 
 @app.route('/delete/<string:id>')
 def delete(id):
-	if request.headers["X-Replit-User-Id"]:
-		global siteName
-		if not id:
-			id = "Please stop trying to break the site lol"
-		return render_template(
-			'delete.html',
-			siteName=siteName,
-			user_id=request.headers['X-Replit-User-Id'],
-			user_name=request.headers['X-Replit-User-Name'],
-			user_roles=request.headers['X-Replit-User-Roles'],
-			id = id
-		)
-	else:
-		return redirect("/", 302)
+    if request.headers["X-Replit-User-Id"]:
+        global siteName
+        if not id:
+            id = "Please stop trying to break the site lol"
+        return render_template('delete.html', siteName=siteName, user_id=request.headers['X-Replit-User-Id'], user_name=request.headers['X-Replit-User-Name'], user_roles=request.headers['X-Replit-User-Roles'], id = id)
+    else:
+        return redirect("/", 302)
 
-@app.route('/delete/<string:id>')
+@app.route('/delete/<string:id>/')
 def delete2(id):
-	if request.headers["X-Replit-User-Id"]:
-		global siteName
-		if not id:
-			id = "Please stop trying to break the site lol"
-		return render_template(
-			'delete.html',
-			siteName=siteName,
-			user_id=request.headers['X-Replit-User-Id'],
-			user_name=request.headers['X-Replit-User-Name'],
-			user_roles=request.headers['X-Replit-User-Roles'],
-			id = id
-		)
-	else:
-		return redirect("/", 302)
+    if request.headers["X-Replit-User-Id"]:
+        global siteName
+        if not id:
+            id = "Please stop trying to break the site lol"
+        return render_template('delete.html', siteName=siteName, user_id=request.headers['X-Replit-User-Id'], user_name=request.headers['X-Replit-User-Name'], user_roles=request.headers['X-Replit-User-Roles'], id = id)
+    else:
+        return redirect("/", 302)
 
 @app.route('/edit/<string:id>')
 def edit(id):
 	if request.headers["X-Replit-User-Id"]:
 		global siteName
-		return render_template(
-			'edit.html',
-			siteName=siteName,
-			user_id=request.headers['X-Replit-User-Id'],
-			user_name=request.headers['X-Replit-User-Name'],
-			user_roles=request.headers['X-Replit-User-Roles'],
-			oldNote = db["note_" + id],
-			oldDescription = db["description_" + id],
-			id=id
-		)
+		return render_template('edit.html', siteName=siteName, user_id = request.headers['X-Replit-User-Id'], user_name = request.headers['X-Replit-User-Name'], user_roles=request.headers['X-Replit-User-Roles'], oldNote = db["note_" + id], oldDescription = db["description_" + id], id = id)
 	else:
 		return redirect("/", 302)
 
@@ -125,16 +89,7 @@ def edit2():
 	id = request.form["id"]
 	if request.headers["X-Replit-User-Id"]:
 		global siteName
-		return render_template(
-			'edit.html',
-			siteName=siteName,
-			user_id=request.headers['X-Replit-User-Id'],
-			user_name=request.headers['X-Replit-User-Name'],
-			user_roles=request.headers['X-Replit-User-Roles'],
-			oldNote = db["note_" + id],
-			oldDescription = db["description_" + id],
-			id=id
-		)
+		return render_template('edit.html', siteName=siteName, user_id=request.headers['X-Replit-User-Id'], user_name=request.headers['X-Replit-User-Name'], user_roles=request.headers['X-Replit-User-Roles'], oldNote = db["note_" + id], oldDescription = db["description_" + id], id=id)
 	else:
 		return redirect("/", 302)
 
@@ -153,7 +108,7 @@ def deleteEntry():
 			db["user_id_" + user_id] = users_ids
 			return redirect(url + "dashboard", 302)
 		except:
-			return render_template('error.html', code = "401",user_name=request.headers['X-Replit-User-Name'], siteName=siteName, message = "Non sei il proprietario di questa nota.")
+			return render_template('error.html', code = "401", user_name=request.headers['X-Replit-User-Name'], siteName=siteName, message = "Non sei il proprietario di questa nota.")
 
 @app.route('/edt', methods=['POST'])
 def editEntry():
@@ -172,51 +127,51 @@ def editEntry():
 
 @app.route('/Fasm.ga.sxcu')
 def sharexuploader():
-	return send_from_directory(os.path.join(app.root_path, 'static'), 'Fasm.ga_255.sxcu')
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'Fasm.ga_255.sxcu')
 
 @app.route("/robots.txt")
 def robots():
-  return send_from_directory(os.path.join(app.root_path, 'static'), 'robots.txt')
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'robots.txt')
 
 @app.route('/note/<key>', methods=['GET'])
-def sendUrl(key):
-  global siteName
-  if request.headers["X-Replit-User-Id"]:
-    try:
-        notez = "note_" + key
-        namez = "name_" + key
-        descriptionz = "description_" + key
-        return render_template("note.html", user_name=request.headers["X-Replit-User-Name"], siteName=siteName, note=db[notez], description=db[descriptionz], name=db[namez])
-    except:
-        return render_template('error.html', user_name=request.headers["X-Replit-User-Name"], code = "404", siteName=siteName, message = "Nota non esistente")
-  else:
-    try:
-        notez = "note_" + key
-        namez = "name_" + key
-        descriptionz = "description_" + key
-        return render_template("note_nologin.html", siteName=siteName, note=db[notez], description=db[descriptionz], name=db[namez])
-    except:
-        return render_template('error_nologin.html', code = "404", siteName=siteName, message = "Nota non esistente")
+def getNote(key):
+    global siteName
+    if request.headers["X-Replit-User-Id"]:
+        try:
+            notez = "note_" + key
+            namez = "name_" + key
+            descriptionz = "description_" + key
+            return render_template("note.html", user_name=request.headers["X-Replit-User-Name"], siteName=siteName, note=db[notez], description=db[descriptionz], name=db[namez])
+        except:
+            return render_template('error.html', user_name=request.headers["X-Replit-User-Name"], code = "404", siteName=siteName, message = "Nota non esistente")
+    else:
+        try:
+            notez = "note_" + key
+            namez = "name_" + key
+            descriptionz = "description_" + key
+            return render_template("note_nologin.html", siteName=siteName, note=db[notez], description=db[descriptionz], name=db[namez])
+        except:
+            return render_template('error_nologin.html', code = "404", siteName=siteName, message = "Nota non esistente")
 
 @app.route('/note/<key>/', methods=['GET'])
-def sendUrl2(key):
-  global siteName
-  if request.headers["X-Replit-User-Id"]:
-    try:
-        notez = "note_" + key
-        namez = "name_" + key
-        descriptionz = "description_" + key
-        return render_template("note.html", user_name=request.headers["X-Replit-User-Name"], siteName=siteName, note=db[notez], description=db[descriptionz], name=db[namez])
-    except:
-        return render_template('error.html', user_name=request.headers["X-Replit-User-Name"], code = "404", siteName=siteName, message = "Nota non esistente")
-  else:
-    try:
-        notez = "note_" + key
-        namez = "name_" + key
-        descriptionz = "description_" + key
-        return render_template("note_nologin.html", siteName=siteName, note=db[notez], description=db[descriptionz], name=db[namez])
-    except:
-        return render_template('error_nologin.html', code = "404", siteName=siteName, message = "Nota non esistente")
+def getNote2(key):
+    global siteName
+    if request.headers["X-Replit-User-Id"]:
+        try:
+            notez = "note_" + key
+            namez = "name_" + key
+            descriptionz = "description_" + key
+            return render_template("note.html", user_name=request.headers["X-Replit-User-Name"], siteName=siteName, note=db[notez], description=db[descriptionz], name=db[namez])
+        except:
+            return render_template('error.html', user_name=request.headers["X-Replit-User-Name"], code = "404", siteName=siteName, message = "Nota non esistente")
+    else:
+        try:
+            notez = "note_" + key
+            namez = "name_" + key
+            descriptionz = "description_" + key
+            return render_template("note_nologin.html", siteName=siteName, note=db[notez], description=db[descriptionz], name=db[namez])
+        except:
+            return render_template('error_nologin.html', code = "404", siteName=siteName, message = "Nota non esistente")
 
 @app.route('/new', methods=['POST'])
 def newEntry():
